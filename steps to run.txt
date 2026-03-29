@@ -1,0 +1,80 @@
+Steps to Run on Another Windows System
+Step 1 — Install Prerequisites
+Python 3.10+ → https://python.org/downloads (check "Add to PATH" during install)
+Node.js 18+ → https://nodejs.org
+Verify in terminal:
+
+
+python --version
+node --version
+Step 2 — Extract & Setup
+
+# Extract fake_news_final.zip anywhere, e.g. C:\Projects\fake_news
+# Open terminal inside that folder
+
+cd C:\Projects\fake_news
+Step 3 — Backend Setup
+
+# Create virtual environment
+python -m venv venv
+
+# Activate it
+venv\Scripts\activate
+
+# Install all packages (includes imbalanced-learn, sklearn, fastapi, nltk)
+pip install -r backend/requirements.txt
+
+# Train the model  (downloads 500KB dataset automatically, takes ~2 mins)
+python backend/model_trainer.py
+You should see:
+
+
+Best model : LinearSVC
+Accuracy   : 0.9874
+Spam Recall: 0.9396
+Step 4 — Start Backend API
+
+# From the fake_news folder
+cd backend
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+Test it → open browser: http://localhost:8000/health
+Should return: {"status":"ready","model_name":"LinearSVC"...}
+
+Step 5 — Frontend Setup
+
+# Open a NEW terminal window, go to fake_news folder
+cd C:\Projects\fake_news\frontend
+
+# Install Node packages
+npm install
+
+# Start frontend
+npm run dev
+Open browser → http://localhost:5173
+
+Step 6 — Use the App
+Paste any text into the input box
+Click Analyze or press Ctrl+Enter
+See SPAM/HAM result with confidence score
+Quick Reference Card
+
+fake_news/
+├── venv\Scripts\activate          ← always activate before running
+│
+├── Terminal 1 (Backend):
+│   cd backend
+│   uvicorn main:app --reload
+│   → http://localhost:8000
+│
+└── Terminal 2 (Frontend):
+    cd frontend
+    npm run dev
+    → http://localhost:5173
+If Something Fails
+Error	Fix
+python not found	Reinstall Python, check "Add to PATH"
+pip install fails	Run: python -m pip install --upgrade pip first
+ModuleNotFoundError	Make sure venv is activated: venv\Scripts\activate
+model not found	Run python backend/model_trainer.py first
+npm not found	Reinstall Node.js
+Frontend blank page	Make sure backend is running on port 8000

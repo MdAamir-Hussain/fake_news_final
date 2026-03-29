@@ -1,0 +1,171 @@
+Deploy on Render + Vercel — Full Steps
+PART 1 — Push to GitHub (do this first)
+1. Go to github.com → Sign up / Login
+
+2. Click + → New repository
+
+Name: fake-news-detector
+Set to Public
+Do NOT tick "Add README"
+Click Create repository
+3. Extract fake_news_final.zip → open terminal inside that folder:
+
+
+git init
+git add .
+git commit -m "initial commit"
+git branch -M main
+git remote add origin https://github.com/YOUR_USERNAME/fake-news-detector.git
+git push -u origin main
+Replace YOUR_USERNAME with your GitHub username
+
+PART 2 — Deploy Backend on Render (Free)
+1. Go to render.com → Sign up with GitHub
+
+2. Click New + → Web Service
+
+3. Click Connect on fake-news-detector repo
+
+4. Fill settings exactly like this:
+
+Field	Value
+Name	fake-news-api
+Region	Oregon (US West)
+Branch	main
+Root Directory	backend
+Runtime	Python 3
+Build Command	pip install -r requirements.txt && python model_trainer.py
+Start Command	uvicorn main:app --host 0.0.0.0 --port $PORT
+Instance Type	Free
+5. Scroll down → Environment Variables → Add Environment Variable:
+
+
+Key:   ALLOWED_ORIGINS
+Value: https://fake-news-detector.vercel.app
+(placeholder — update after Vercel deploy)
+
+6. Click Create Web Service
+
+7. Wait 4–6 minutes — watch the logs, you'll see:
+
+
+Downloading SMS Spam Collection...
+Training Logistic Regression...
+Training LinearSVC...
+Best model: LinearSVC  Accuracy: 0.9874
+[OK] Model loaded: LinearSVC
+Uvicorn running on 0.0.0.0:PORT
+8. Copy your backend URL from top of page:
+
+
+https://fake-news-api.onrender.com
+9. Test it → open in browser:
+
+
+https://fake-news-api.onrender.com/health
+Should show:
+
+
+{"status":"ready","model_name":"LinearSVC","accuracy":0.9874}
+PART 3 — Deploy Frontend on Vercel (Free)
+1. Go to vercel.com → Sign up with GitHub (no credit card needed)
+
+2. Click Add New → Project
+
+3. Find fake-news-detector → click Import
+
+4. Configure:
+
+Field	Value
+Framework Preset	Vite
+Root Directory	frontend
+Build Command	npm run build
+Output Directory	dist
+Install Command	npm install
+5. Click Environment Variables → expand it → add:
+
+
+Key:   VITE_API_URL
+Value: https://fake-news-api.onrender.com
+(use your exact Render URL from Part 2 Step 8)
+
+6. Click Deploy → wait ~1 minute
+
+7. Copy your frontend URL:
+
+
+https://fake-news-detector.vercel.app
+PART 4 — Connect Backend to Frontend
+1. Go back to render.com → your fake-news-api service
+
+2. Click Environment tab
+
+3. Update the variable:
+
+
+ALLOWED_ORIGINS = https://fake-news-detector.vercel.app
+(your actual Vercel URL)
+
+4. Click Save Changes → Render restarts automatically (30 sec)
+
+PART 5 — Test Everything
+1. Open your Vercel URL in browser
+
+2. Paste this in the text box:
+
+
+WINNER!! You have been selected to receive a £900 prize reward! 
+Call 09061701461 NOW to claim. Valid 12 hours only.
+3. Click Analyze → should show SPAM 99%+
+
+4. Also test these URLs directly:
+
+
+https://fake-news-api.onrender.com/health   ← API health
+https://fake-news-api.onrender.com/docs     ← Swagger UI
+Important Notes
+Thing	Detail
+Render free sleep	Backend sleeps after 15 min idle — first request takes ~30 sec to wake up
+Auto deploy	Every git push triggers new deploy on both Render + Vercel automatically
+Render logs	Dashboard → your service → Logs tab if something fails
+Free limits	Render: 750 hrs/month · Vercel: unlimited for static sites
+Model retrains	Every Render deploy runs model_trainer.py automatically
+If Render Build Fails
+Error: ModuleNotFoundError
+
+
+→ Check Root Directory is set to "backend" not "."
+Error: No module named preprocessor
+
+
+→ Root Directory must be "backend" — preprocessor.py is inside backend/
+Error: Port already in use
+
+
+→ Start command must use $PORT not 8000
+   uvicorn main:app --host 0.0.0.0 --port $PORT   ✓
+   uvicorn main:app --host 0.0.0.0 --port 8000    ✗
+Frontend shows "API Offline"
+
+
+→ Check VITE_API_URL in Vercel matches exact Render URL
+→ Check ALLOWED_ORIGINS in Render matches exact Vercel URL
+→ Redeploy both after fixing
+Quick Reference
+
+GitHub ──────────────────────────────────────────
+         │                          │
+         ▼                          ▼
+   render.com                  vercel.com
+   (backend/)                  (frontend/)
+   
+   Root Dir : backend          Root Dir : frontend
+   Build    : pip install...   Build    : npm run build
+   Start    : uvicorn...       Output   : dist
+   Env      : ALLOWED_ORIGINS  Env      : VITE_API_URL
+         │                          │
+         └──────── talk to ─────────┘
+
+Backend URL : https://fake-news-api.onrender.com
+Frontend URL: https://fake-news-detector.vercel.app
+Total cost: $0. No credit card needed on either platform.

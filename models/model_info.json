@@ -1,0 +1,76 @@
+{
+  "model_name": "LinearSVC",
+  "accuracy": 0.9874,
+  "precision": 0.9874,
+  "recall": 0.9874,
+  "f1_score": 0.9874,
+  "spam_recall": 0.9396,
+  "classes": [
+    "ham",
+    "spam"
+  ],
+  "label_map": {
+    "0": "ham",
+    "1": "spam"
+  },
+  "best_params": {
+    "clf__estimator__C": 10.0,
+    "tfidf__max_features": 8000,
+    "tfidf__ngram_range": [
+      1,
+      2
+    ]
+  },
+  "train_samples": 4457,
+  "test_samples": 1115,
+  "all_results": [
+    {
+      "model_name": "Logistic Regression",
+      "accuracy": 0.983,
+      "precision": 0.9834,
+      "recall": 0.983,
+      "f1_score": 0.9831,
+      "spam_recall": 0.9597
+    },
+    {
+      "model_name": "Naive Bayes",
+      "accuracy": 0.9821,
+      "precision": 0.9819,
+      "recall": 0.9821,
+      "f1_score": 0.9819,
+      "spam_recall": 0.906
+    },
+    {
+      "model_name": "Random Forest",
+      "accuracy": 0.983,
+      "precision": 0.9833,
+      "recall": 0.983,
+      "f1_score": 0.9825,
+      "spam_recall": 0.8725
+    },
+    {
+      "model_name": "LinearSVC",
+      "accuracy": 0.9874,
+      "precision": 0.9874,
+      "recall": 0.9874,
+      "f1_score": 0.9874,
+      "spam_recall": 0.9396
+    },
+    {
+      "model_name": "LR + SMOTE",
+      "accuracy": 0.9848,
+      "precision": 0.9849,
+      "recall": 0.9848,
+      "f1_score": 0.9848,
+      "spam_recall": 0.953
+    },
+    {
+      "model_name": "LinearSVC (Tuned)",
+      "accuracy": 0.9874,
+      "precision": 0.9873,
+      "recall": 0.9874,
+      "f1_score": 0.9873,
+      "spam_recall": 0.9329
+    }
+  ]
+}
